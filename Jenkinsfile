@@ -2,40 +2,35 @@ pipeline {
   environment {
     registry = "aryashreep/simplilearn-devops-certification"
     registryCredential = 'dockerhub'
+    dockerImage = ''
   }
   agent any
   stages {
-        stage('Building image') {
-        steps{
-            script {
-            dockerImage = docker.build registry + ":$BUILD_NUMBER"
-            }
-        }
-        }
-
-        stage('Deploy Image') {
-        steps{
-            script {
-            docker.withRegistry( '', 'dockerhub' ) {
-                dockerImage.push()
-            }
-            }
-        }
-        }
-
-        stage('Remove Image') {
-        steps{
-            sh "docker rmi $registry:$BUILD_NUMBER"
-        }
-        }
-   }   
-}
-
-node {
-    stage('Execute Image'){
-        def customImage = docker.build("aryashreep/simplilearn-devops-certification:${env.BUILD_NUMBER}")
-        customImage.inside {
-            sh 'echo This is the code executing inside the container.'
-        }
+    stage('Cloning Git') {
+      steps {
+        git 'https://github.com/gustavoapolinario/microservices-node-example-todo-frontend.git'
+      }
     }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+        }
+      }
+    }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push()
+          }
+        }
+      }
+    }
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $registry:$BUILD_NUMBER"
+      }
+    }
+  }
 }
