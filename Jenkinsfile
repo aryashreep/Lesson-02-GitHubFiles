@@ -3,7 +3,7 @@ node {
 
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
-        git 'https://github.com/valera-rozuvan/online-counter.git'
+        git 'https://github.com/aryashreep/simplilearn-devops-certification.git'
     }
 
     stage('Build image') {
