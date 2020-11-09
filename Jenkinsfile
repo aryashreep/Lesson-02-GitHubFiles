@@ -19,8 +19,7 @@ pipeline {
       }
     }
     stage('Execute Image'){
-        def customImage = docker.build("aryashreep/simplilearn-devops-certification:${env.BUILD_NUMBER}")
-        customImage.inside {
+        dockerImage.inside {
             sh 'echo This is the code executing inside the container.'
         }
     }    
