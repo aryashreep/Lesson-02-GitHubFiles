@@ -34,3 +34,11 @@ pipeline {
         } 
     }
 }
+node {
+    stage('Execute Image'){
+        def customImage = docker.build("aryashreep/simplilearn-devops-certification:${env.BUILD_NUMBER}")
+        customImage.inside {
+            sh 'echo This is the code executing inside the container.'
+        }
+    }
+}
