@@ -13,7 +13,8 @@ pipeline {
         } 
         stage('Building our image') { 
             steps { 
-                script { 
+                script {
+                    sh "docker rmi --force $registry:$BUILD_NUMBER"
                     dockerImage = docker.build registry + ":$BUILD_NUMBER" 
                 }
             } 
