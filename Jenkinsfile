@@ -21,8 +21,9 @@ pipeline {
         stage('Deploy our image') { 
             steps { 
                 script {
-                    docker.withRegistry( '', registryCredential ) { 
-                        dockerImage.push() 
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push("$BUILD_NUMBER")
+                        dockerImage.push('latest')
                     }
                 } 
             }
@@ -30,7 +31,8 @@ pipeline {
         stage('Cleaning up') { 
             steps {
                 sh "docker images"
-                sh "docker rmi --force $registry:$BUILD_NUMBER" 
+                sh "docker rmi --force $registry:$BUILD_NUMBER"
+                sh "docker rmi --force $registry:latest"
             }
         } 
     }
