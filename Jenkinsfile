@@ -20,7 +20,8 @@ pipeline {
         }
         stage('Deploy our image') { 
             steps { 
-                script { 
+                script {
+                    sh "docker rmi --force $registry:$BUILD_NUMBER"
                     docker.withRegistry( '', registryCredential ) { 
                         dockerImage.push() 
                     }
@@ -29,7 +30,7 @@ pipeline {
         } 
         stage('Cleaning up') { 
             steps { 
-                sh "docker rmi $registry:$BUILD_NUMBER" 
+                sh "docker rmi --force $registry:$BUILD_NUMBER" 
             }
         } 
     }
