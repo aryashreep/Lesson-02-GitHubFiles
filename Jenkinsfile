@@ -15,14 +15,10 @@ pipeline {
       steps{
         script {
           dockerImage = docker.build registry + ":$BUILD_NUMBER"
+          sh 'echo This is the code executing inside the container.'
         }
       }
-    }
-    stage('Execute Image'){
-        dockerImage.inside {
-            sh 'echo This is the code executing inside the container.'
-        }
-    }    
+    } 
     stage('Deploy Image') {
       steps{
         script {
