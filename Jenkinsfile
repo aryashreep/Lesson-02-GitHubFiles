@@ -14,11 +14,11 @@ pipeline {
         stage('Building our image') { 
             steps { 
                 script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER" registry + ":latest"
                 }
             } 
         }
-        /*stage('Deploy our image') { 
+        stage('Deploy our image') { 
             steps { 
                 script {
                     docker.withRegistry( '', registryCredential ) { 
@@ -26,7 +26,7 @@ pipeline {
                     }
                 } 
             }
-        }*/ 
+        }
         stage('Cleaning up') { 
             steps {
                 sh "docker images"
