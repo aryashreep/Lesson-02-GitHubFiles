@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Cloning Git') {
       steps {
-        git 'https://github.com/gustavoapolinario/microservices-node-example-todo-frontend.git'
+        git 'https://github.com/valera-rozuvan/online-counter.git'
       }
     }
     stage('Building image') {
@@ -29,8 +29,17 @@ pipeline {
     }
     stage('Remove Unused docker image') {
       steps{
-        sh "docker rmi $registry:$BUILD_NUMBER"
+        sh "docker rmi -f $registry:$BUILD_NUMBER"
       }
     }
   }
+}
+
+node {
+    stage('Execute Image'){
+        def customImage = docker.build("aryashreep/simplilearn-devops-certification:${env.BUILD_NUMBER}")
+        customImage.inside {
+            sh 'echo This is the code executing inside the container.'
+        }
+    }
 }
