@@ -23,7 +23,6 @@ pipeline {
                 script {
                     docker.withRegistry( '', registryCredential ) {
                         dockerImage.push()
-                        dockerImage.push('latest')
                     }
                 } 
             }
@@ -32,7 +31,6 @@ pipeline {
             steps {
                 sh "docker images"
                 sh "docker rmi --force $registry:$BUILD_NUMBER"
-                sh "docker rmi --force $registry:latest"
             }
         } 
     }
