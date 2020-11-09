@@ -1,36 +1,29 @@
-pipeline {
-  environment {
-    registry = "aryashreep/simplilearn-devops-certification"
-    registryCredential = 'dockerhub'
-    dockerImage = ''
-  }
-  agent any
-  stages {
-    stage('Cloning Git') {
-      steps {
-        git 'https://github.com/valera-rozuvan/online-counter.git'
-      }
-    }
-    stage('Building image') {
-      steps{
-        script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+node {
+    def newApp
+    def registry = 'aryashreep/simplilearn-devops-certification'
+    def registryCredential = 'dockerhub'
+	
+	stage('Git') {
+		git 'https://github.com/valera-rozuvan/online-counter.git'
+	}
+	stage('Build') {
+		sh 'echo "I am inside the container"'
+	}
+	stage('Building image') {
+        docker.withRegistry( 'https://' + registry, registryCredential ) {
+		    def buildName = registry + ":$BUILD_NUMBER"
+			newApp = docker.build buildName
+			newApp.push()
         }
-      }
-    } 
-    stage('Deploy Image') {
-      steps{
-        script {
-          docker.withRegistry( '', registryCredential ) {
-            dockerImage.push()
-          }
+	}
+	stage('Registring image') {
+        docker.withRegistry( 'https://' + registry, registryCredential ) {
+    		newApp.push 'latest2'
         }
-      }
+	}
+    stage('Removing image') {
+        sh "docker rmi $registry:$BUILD_NUMBER"
+        sh "docker rmi $registry:latest"
     }
-    stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi -f $registry:$BUILD_NUMBER"
-      }
-    }
-  }
+    
 }
